@@ -19,11 +19,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Combat")
 	TObjectPtr<UCombatComponent> CombatComp;
+
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:
 
 	virtual void BeginPlay() override;
 
-
+	
 public:
 	virtual void Tick(float DeltaTime) override;
 };

@@ -13,13 +13,13 @@ class TESTTASK_API UCombatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+
 	UCombatComponent();
 
-	// Called every frame
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 protected:
-	// Called when the game starts
+
 	virtual void BeginPlay() override;
 
 private:
@@ -31,9 +31,10 @@ private:
 	float MaxStamina = 60.f;
 	float Stamina;
 
-public:	
+public:
 	
 	//Getters & Setters
+	void TakeDamage(float InDamage);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE float GetMaxHealth() { return MaxHealth; }

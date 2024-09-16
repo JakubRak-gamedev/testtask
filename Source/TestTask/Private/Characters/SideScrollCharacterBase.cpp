@@ -3,6 +3,7 @@
 
 #include "Characters/SideScrollCharacterBase.h"
 #include "Components/CombatComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ASideScrollCharacterBase::ASideScrollCharacterBase()
 {
@@ -12,6 +13,11 @@ ASideScrollCharacterBase::ASideScrollCharacterBase()
 	CombatComp = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 }
 
+
+float ASideScrollCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	return 0.0f;
+}
 
 void ASideScrollCharacterBase::BeginPlay()
 {

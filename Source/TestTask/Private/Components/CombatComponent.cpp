@@ -25,6 +25,11 @@ void UCombatComponent::BeginPlay()
 	
 }
 
+void UCombatComponent::TakeDamage(float InDamage)
+{
+	Health = Health - InDamage;
+}
+
 
 // Called every frame
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

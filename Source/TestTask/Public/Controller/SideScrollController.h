@@ -25,6 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+
 private:
 	/*Variables*/
 	TObjectPtr<ASideScrollMainCharacter> ControlledCharacter;
@@ -35,5 +36,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> AttackAction;
+
 	void Move(const FInputActionValue& Value);
+	void Attack();
 };
