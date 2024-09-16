@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class ASideScrollMainCharacter;
 /**
  * 
  */
@@ -25,6 +26,9 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
+	/*Variables*/
+	TObjectPtr<ASideScrollMainCharacter> ControlledCharacter;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> Context;
 

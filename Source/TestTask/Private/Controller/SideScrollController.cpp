@@ -4,6 +4,8 @@
 #include "Controller/SideScrollController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "Characters/SideScrollMainCharacter.h"
 
 ASideScrollController::ASideScrollController()
 {
@@ -17,6 +19,8 @@ void ASideScrollController::BeginPlay()
 	check(Subsystem);
 
 	Subsystem->AddMappingContext(Context, 0);
+
+	ControlledCharacter = GetPawn<ASideScrollMainCharacter>();
 }
 
 void ASideScrollController::SetupInputComponent()
@@ -30,17 +34,16 @@ void ASideScrollController::SetupInputComponent()
 
 void ASideScrollController::Move(const FInputActionValue& Value)
 {
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	if (APawn* ControlledPawn = GetPawn<APawn>())
-	{
-		ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
-	}
+	const FVector2D ValueVector = Value.Get<FVector2D>();
+	FRotator CameraRotation = ControlledCharacter->FollowCamera->GetComponentRotation();
+	FRotator YawRotation(0, CameraRotation.Yaw, 0);  // Ignore pitch and roll for movement
+	
+	// Get forward vector relative to the camera's yaw rotation
+	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	
+	ControlledCharacter->AddMovementInput(ForwardDirection, ValueVector.X);
+	ControlledCharacter->AddMovementInput(RightDirection, ValueVector.Y);
+   
 
 }
