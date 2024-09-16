@@ -30,7 +30,10 @@ void ASideScrollController::SetupInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASideScrollController::Move);
-	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ASideScrollController::Attack);
+	EnhancedInputComponent->BindAction(RightAttackAction, ETriggerEvent::Started, this, &ASideScrollController::RightLightAttack);
+	EnhancedInputComponent->BindAction(RightAttackAction, ETriggerEvent::Started, this, &ASideScrollController::RightHeavyAttack);
+	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &ASideScrollController::ShiftKeyPressed);
+	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &ASideScrollController::ShiftKeyReleased);
 }
 
 void ASideScrollController::Move(const FInputActionValue& Value)
@@ -52,10 +55,45 @@ void ASideScrollController::Move(const FInputActionValue& Value)
 
 }
 
-void ASideScrollController::Attack()
+void ASideScrollController::RightLightAttack()
 {
+	if (bShiftKeyDown == true) return;
 	if (ControlledCharacter == nullptr) return;
 
-	ControlledCharacter->Attack();
-
+	ControlledCharacter->Attack(FName("Right"), false);
 }
+
+void ASideScrollController::RightHeavyAttack()
+{
+	if (bShiftKeyDown == false) return;
+	if (ControlledCharacter == nullptr) return;
+
+	ControlledCharacter->Attack(FName("Right"), true);
+}
+
+void ASideScrollController::LeftLightAttack()
+{
+	if (bShiftKeyDown == true) return;
+	if (ControlledCharacter == nullptr) return;
+
+	ControlledCharacter->Attack(FName("Left"), false);
+}
+
+void ASideScrollController::LeftHeavyAttack()
+{
+	if (bShiftKeyDown == false) return;
+	if (ControlledCharacter == nullptr) return;
+
+	ControlledCharacter->Attack(FName("Left"), true);
+}
+
+void ASideScrollController::ShiftKeyPressed()
+{
+	bShiftKeyDown = true;
+}
+
+void ASideScrollController::ShiftKeyReleased()
+{
+	bShiftKeyDown = false;
+}
+

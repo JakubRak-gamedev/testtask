@@ -37,8 +37,22 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> AttackAction;
+	TObjectPtr<UInputAction> RightAttackAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> LeftAttackAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
 
 	void Move(const FInputActionValue& Value);
-	void Attack();
+	void RightLightAttack();
+	void RightHeavyAttack();
+	void LeftLightAttack();
+	void LeftHeavyAttack();
+
+	void ShiftKeyPressed();
+	void ShiftKeyReleased();
+
+	bool bShiftKeyDown = false;
 };

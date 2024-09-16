@@ -14,4 +14,5 @@ class TESTTASK_API ASideScrollEnemy : public ASideScrollCharacterBase
 {
 	GENERATED_BODY()
 	
+
 };

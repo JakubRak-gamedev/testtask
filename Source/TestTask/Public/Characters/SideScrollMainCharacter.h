@@ -30,10 +30,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CameraSettings")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	void Attack();
+	void Attack(const FName& SideName, bool const bHeavyAttack);
 
-
-	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:
 
 
@@ -48,9 +46,6 @@ private:
 	UPROPERTY(EditDefaultsOnly , Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	FName BladeSocket;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> AttackMontage;
-
 	bool bReadyToAttack = true;
 	bool bIsAttacking = false;
 

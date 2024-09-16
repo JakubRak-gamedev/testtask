@@ -32,62 +32,62 @@ void ASideScrollMainCharacter::Tick(float DeltaTime)
 
 	FollowCamera->SetWorldLocation(UKismetMathLibrary::VInterpTo(CameraLocation, SplineLocationPoint, GetWorld()->GetDeltaSeconds(), 0.f));
 	FollowCamera->SetWorldRotation(Direction.Rotation());
+
+	if (!bIsAttacking && bReadyToAttack)
+	{
+		//easy way to add stamina regen functionallity, but i'd personally change it on release because its confusing
+		if (GetVelocity().Size() < 150.f)
+		{
+			CombatComp->ReduceStamina(-0.1f);
+		}
+		if (GetVelocity().Size() <= 1.f)
+		{
+			CombatComp->ReduceStamina(-1.f);
+		}
+		
+	}
 }
 
-void ASideScrollMainCharacter::Attack()
+void ASideScrollMainCharacter::Attack(const FName& SideName,bool const bHeavyAttack)
 {
-	
+	if (CombatComp->GetStamina() - /*ReduceAmount*/ 10.f < 0.f && !bReadyToAttack) return;
 
 	bIsAttacking = true;
 	bReadyToAttack = false;
 
+	UAnimMontage* AttackMontage = CombatComp->GetAnimMontageFromProperties(SideName, bHeavyAttack);
+	float BaseDamage = CombatComp->GetDamageFromMontage(AttackMontage) + FMath::RandRange(0, 15);
 	float AnimLength = PlayAnimMontage(AttackMontage);
 	
 	const FVector SocketLocation = GetMesh()->GetSocketLocation(BladeSocket);
 	const FVector Center = SocketLocation + GetActorForwardVector() * 100.f;
 	
-	GetWorldTimerManager().SetTimer(AttackTimerReset, this, &ASideScrollMainCharacter::AttackReset, AnimLength, true);
+	GetWorldTimerManager().SetTimer(AttackTimerReset, this, &ASideScrollMainCharacter::AttackReset, AnimLength, false);
 
+	//defining what object types we are looking for
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
 	TArray<AActor*> IgnoreActors;
 	IgnoreActors.Add(this);
-	TArray<AActor*> ActorsHit;
 
-	UKismetSystemLibrary::SphereOverlapActors(this, Center, 100.f, ObjectTypes, AActor::StaticClass(), IgnoreActors, ActorsHit);
+	TArray<AActor*> ActorsHitted;
+	UKismetSystemLibrary::SphereOverlapActors(this, Center, 100.f, ObjectTypes, AActor::StaticClass(), IgnoreActors, ActorsHitted);
 
-	for (AActor* HittedActor : ActorsHit)
+	for (AActor* HittedActor : ActorsHitted)
 	{
-		UGameplayStatics::ApplyDamage(HittedActor, 20.f, Controller, this, UDamageType::StaticClass());
+		UGameplayStatics::ApplyDamage(HittedActor, BaseDamage, Controller, this, UDamageType::StaticClass());
 	}
-}
 
-float ASideScrollMainCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	CombatComp->TakeDamage(Damage);
-
-	if (CombatComp->GetHealth() <= 0.f)
-	{
-		// Die function
-		GetMesh()->SetSimulatePhysics(true);
-
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-		GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
-
-		SetLifeSpan(5.f);
-	}
-	//Play HitReact Animation
-	FString FloatAsString = FString::SanitizeFloat(CombatComp->GetHealth());
-
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, FString::Printf(TEXT("Damage Dealt: %s"), *FloatAsString));
-
-	return Damage;
+	CombatComp->ReduceStamina(BaseDamage - 8.f);
 }
 
 void ASideScrollMainCharacter::AttackReset()
 {
 	bIsAttacking = false;
 	bReadyToAttack = true;
+
+	FString StaminaStr = FString::SanitizeFloat(CombatComp->GetStamina());
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, FString::Printf(TEXT("Stamina: %s"), *StaminaStr));
 }
 

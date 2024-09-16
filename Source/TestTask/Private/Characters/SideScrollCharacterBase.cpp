@@ -16,13 +16,34 @@ ASideScrollCharacterBase::ASideScrollCharacterBase()
 
 float ASideScrollCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	//Here we are substracting Damage from our current Health
+	CombatComp->TakeDamage(Damage);
+
+	PlayAnimMontage(HitReact);
+
+	if (CombatComp->GetHealth() <= 0.f)
+	{
+		Die();
+	}
+	
+	return Damage;
 }
 
 void ASideScrollCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ASideScrollCharacterBase::Die()
+{
+	//Enabling Ragdoll
+	GetMesh()->SetSimulatePhysics(true);
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
+
+	SetLifeSpan(5.f);
 }
 
 void ASideScrollCharacterBase::Tick(float DeltaTime)

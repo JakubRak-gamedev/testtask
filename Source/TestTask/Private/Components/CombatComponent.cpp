@@ -3,26 +3,18 @@
 
 #include "Components/CombatComponent.h"
 
-// Sets default values for this component's properties
+
 UCombatComponent::UCombatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-
-// Called when the game starts
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Health = MaxHealth;
 	Stamina = MaxStamina;
-	// ...
-	
+
 }
 
 void UCombatComponent::TakeDamage(float InDamage)
@@ -30,12 +22,31 @@ void UCombatComponent::TakeDamage(float InDamage)
 	Health = Health - InDamage;
 }
 
-
-// Called every frame
-void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCombatComponent::ReduceStamina(float ReduceAmount)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Stamina = Stamina - ReduceAmount;
+	Stamina = FMath::Clamp(Stamina, 0, MaxStamina);
+}
 
-	// ...
+UAnimMontage* UCombatComponent::GetAnimMontageFromProperties(const FName& SideName, bool bIsHeavy)
+{
+	for (const FUAttackProperties& Attack : Attacks)
+	{
+		if (Attack.SideName == SideName && Attack.IsHeavy == bIsHeavy)
+			return Attack.AttackMontage;
+	}
+
+	return nullptr;
+}
+
+float UCombatComponent::GetDamageFromMontage(const UAnimMontage* Montage)
+{
+	for (const FUAttackProperties& Attack : Attacks)
+	{
+		if (Attack.AttackMontage == Montage)
+			return Attack.BaseDamage;
+	}
+
+	return 0.f;
 }
 

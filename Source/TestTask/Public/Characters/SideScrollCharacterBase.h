@@ -16,6 +16,7 @@ class TESTTASK_API ASideScrollCharacterBase : public ACharacter
 public:
 
 	ASideScrollCharacterBase();
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Combat")
 	TObjectPtr<UCombatComponent> CombatComp;
@@ -25,7 +26,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	TObjectPtr<UAnimMontage> HitReact;
+private:
+	void Die();
 	
-public:
-	virtual void Tick(float DeltaTime) override;
 };
