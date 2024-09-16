@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SideScrollCharacterBase.generated.h"
 
+class UCombatComponent;
+
 UCLASS()
 class TESTTASK_API ASideScrollCharacterBase : public ACharacter
 {
@@ -15,9 +17,12 @@ public:
 
 	ASideScrollCharacterBase();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Combat")
+	TObjectPtr<UCombatComponent> CombatComp;
 protected:
 
 	virtual void BeginPlay() override;
+
 
 public:
 	virtual void Tick(float DeltaTime) override;

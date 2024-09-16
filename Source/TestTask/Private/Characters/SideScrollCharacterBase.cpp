@@ -2,12 +2,14 @@
 
 
 #include "Characters/SideScrollCharacterBase.h"
+#include "Components/CombatComponent.h"
 
 ASideScrollCharacterBase::ASideScrollCharacterBase()
 {
  	
 	PrimaryActorTick.bCanEverTick = true;
 
+	CombatComp = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 }
 
 
