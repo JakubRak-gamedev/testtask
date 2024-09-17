@@ -74,4 +74,5 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetDamageFromMontage(const UAnimMontage* Montage);
 		
+	float GetHealthPercent() const { return Health / MaxHealth; }
 };

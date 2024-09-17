@@ -8,6 +8,7 @@
 
 class UBehaviorTree;
 class AEnemyAIController;
+class UHealthBarComponent;
 /**
  * 
  */
@@ -16,12 +17,22 @@ class TESTTASK_API ASideScrollEnemy : public ASideScrollCharacterBase
 {
 	GENERATED_BODY()
 public:
+	ASideScrollEnemy();
+
 	virtual void PossessedBy(AController* NewController);
 
+
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditDefaultsOnly, Category ="AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 	UPROPERTY()
 	TObjectPtr<AEnemyAIController> EnemyAIController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+ 	TObjectPtr<UHealthBarComponent> HealthBarComponent;
 };
