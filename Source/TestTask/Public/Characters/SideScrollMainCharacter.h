@@ -34,6 +34,7 @@ public:
 
 protected:
 
+	virtual void BeginPlay();
 
 private:
 
@@ -50,10 +51,18 @@ private:
 	bool bIsAttacking = false;
 
 	FTimerHandle AttackTimerReset;
-
 	void AttackReset();
+
+	FTimerHandle StaminaRegenTimer;
+	void HandleStamina();
+	
+	float MovementOffsetYaw = 0.f;
 public:
 	/*GETTERS & SETTERS*/
 	
-	FORCEINLINE bool GetIsAttacking() { return bIsAttacking; }
+	FORCEINLINE bool GetIsAttacking()const { return bIsAttacking; }
+	FORCEINLINE void SetOffsetYaw(float InValue) {	MovementOffsetYaw = InValue;}
+	FORCEINLINE float GetOffSetYaw() const { return MovementOffsetYaw; }
+
+	bool bHasStamina() const;
 };

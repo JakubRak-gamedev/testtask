@@ -4,6 +4,7 @@
 #include "Characters/SideScrollCharacterBase.h"
 #include "Components/CombatComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ASideScrollCharacterBase::ASideScrollCharacterBase()
 {
@@ -11,6 +12,8 @@ ASideScrollCharacterBase::ASideScrollCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CombatComp = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
+
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 }
 
 

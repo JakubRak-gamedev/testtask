@@ -2,7 +2,7 @@
 
 
 #include "Components/CombatComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
 
 UCombatComponent::UCombatComponent()
 {

@@ -6,6 +6,15 @@
 #include "GameFramework/Character.h"
 #include "SideScrollCharacterBase.generated.h"
 
+UENUM(BlueprintType)
+enum class ECombatState : uint8
+{
+	ECS_NonCombat UMETA(DisplayName = "NonCombat"),
+	ECS_InCombat UMETA(DisplayName = "InCombat"),
+
+	ECS_MAX UMETA(DisplayName = "DefaultMAX")
+};
+
 class UCombatComponent;
 
 UCLASS()
@@ -22,13 +31,20 @@ public:
 	TObjectPtr<UCombatComponent> CombatComp;
 
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	
 protected:
 
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
 	TObjectPtr<UAnimMontage> HitReact;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	ECombatState CombatState = ECombatState::ECS_NonCombat;
 private:
 	void Die();
 	
+public:
+	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
 };
