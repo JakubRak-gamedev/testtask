@@ -49,6 +49,8 @@ private:
 	float MaxStamina = 60.f;
 	float Stamina;
 
+	UPROPERTY(EditAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	float StaminaRegenRate = 8.f;
 public:
 	
 	//Getters & Setters
@@ -57,22 +59,33 @@ public:
 	void ReduceStamina(float ReduceAmount);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
+	FORCEINLINE float GetMaxHealth() const {return MaxHealth;};
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE float GetHealth() { return Health; }
+	FORCEINLINE float GetHealth() const  { return Health; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE float GetMaxStamina() { return MaxStamina; }
+	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE float GetStamina() { return Stamina; }
+	FORCEINLINE float GetStamina() const { return Stamina; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UAnimMontage* GetAnimMontageFromProperties(const FName& SideName, bool bIsHeavy);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetDamageFromMontage(const UAnimMontage* Montage);
-		
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetHealthPercent() const { return Health / MaxHealth; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool HasEnoughStamina(const float Cost) const {return Stamina > Cost;}
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+		FActorComponentTickFunction* ThisTickFunction) override;
+
+	void SetMaxHealth(float InHealth);
+
+	void SetMaxStamina(float InStamina);
 };

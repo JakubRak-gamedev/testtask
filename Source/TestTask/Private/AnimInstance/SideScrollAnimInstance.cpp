@@ -25,7 +25,7 @@ void USideScrollAnimInstance::UpdateAnimationProperties(float DeltaTime)
 
 	bIsInCombat = SideScrollCharacter->GetCombatState() == ECombatState::ECS_InCombat;
 
-	GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("Offset: %f"), MovementOffset));
+	//GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("Offset: %f"), MovementOffset));
 	//TurnInPlace();
 }
 

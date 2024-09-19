@@ -40,8 +40,8 @@ void ASideScrollController::SetupInputComponent()
 void ASideScrollController::Move(const FInputActionValue& Value)
 {
 	if (ControlledCharacter == nullptr) return;
-	if (ControlledCharacter->GetIsAttacking()) return;
-	if (!ControlledCharacter->bHasStamina()) return;
+	if (ICombatInterface::Execute_GetIsAttacking(ControlledCharacter)) return;
+	if (!ControlledCharacter->HasEnoughtStamina(10.f)) return;
 
 	const FVector2D ValueVector = Value.Get<FVector2D>();
 	FRotator CameraRotation = ControlledCharacter->FollowCamera->GetComponentRotation();

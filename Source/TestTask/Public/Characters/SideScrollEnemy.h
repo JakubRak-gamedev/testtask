@@ -19,11 +19,14 @@ class TESTTASK_API ASideScrollEnemy : public ASideScrollCharacterBase
 public:
 	ASideScrollEnemy();
 
-	virtual void PossessedBy(AController* NewController);
+	virtual void PossessedBy(AController* NewController) override;
 
 
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	/*CombatInterface Funtioncs*/
+	virtual bool GetIsAttacking_Implementation() override;
+	/*END*/
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,4 +38,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
  	TObjectPtr<UHealthBarComponent> HealthBarComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category ="Combat")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+private:
+	void AttackRefresh();
 };

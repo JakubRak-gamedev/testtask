@@ -32,6 +32,13 @@ public:
 
 	void Attack(const FName& SideName, bool const bHeavyAttack);
 
+	/*CombatInterface Funtioncs*/
+	virtual bool GetIsAttacking_Implementation() override;
+
+	virtual void SetMaxHealth_Implementation(float NewHealth) override;
+
+	virtual void SetMaxStamina_Implementation(float InStamina) override;
+	/*END*/
 protected:
 
 	virtual void BeginPlay();
@@ -47,22 +54,21 @@ private:
 	UPROPERTY(EditDefaultsOnly , Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	FName BladeSocket;
 	
-	bool bReadyToAttack = true;
-	bool bIsAttacking = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> Start;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USceneComponent> End;
 
 	FTimerHandle AttackTimerReset;
 	void AttackReset();
-
-	FTimerHandle StaminaRegenTimer;
-	void HandleStamina();
 	
 	float MovementOffsetYaw = 0.f;
 public:
 	/*GETTERS & SETTERS*/
 	
-	FORCEINLINE bool GetIsAttacking()const { return bIsAttacking; }
 	FORCEINLINE void SetOffsetYaw(float InValue) {	MovementOffsetYaw = InValue;}
 	FORCEINLINE float GetOffSetYaw() const { return MovementOffsetYaw; }
 
-	bool bHasStamina() const;
+	bool HasEnoughtStamina(const float Cost) const;
 };

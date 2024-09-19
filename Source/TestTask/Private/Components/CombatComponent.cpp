@@ -2,10 +2,10 @@
 
 
 #include "Components/CombatComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 UCombatComponent::UCombatComponent()
 {
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UCombatComponent::BeginPlay()
@@ -14,7 +14,6 @@ void UCombatComponent::BeginPlay()
 
 	Health = MaxHealth;
 	Stamina = MaxStamina;
-
 }
 
 void UCombatComponent::TakeDamage(float InDamage)
@@ -48,5 +47,30 @@ float UCombatComponent::GetDamageFromMontage(const UAnimMontage* Montage)
 	}
 
 	return 0.f;
+}
+
+void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	float RegenRate = StaminaRegenRate;
+	if(GetOwner()->GetVelocity().Size() > 0.f)
+	{
+		RegenRate =  -RegenRate;
+	}
+	
+	Stamina = FMath::Clamp(Stamina + RegenRate * DeltaTime, 0.f, MaxStamina);
+	
+}
+
+void UCombatComponent::SetMaxHealth(float InHealth)
+{
+	MaxHealth = InHealth;
+}
+
+void UCombatComponent::SetMaxStamina(float InStamina)
+{
+	MaxStamina = InStamina;
 }
 

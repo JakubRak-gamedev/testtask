@@ -9,7 +9,6 @@
 #include "Components/SplineComponent.h"
 #include "Components/CombatComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 ASideScrollMainCharacter::ASideScrollMainCharacter()
 {
@@ -17,6 +16,12 @@ ASideScrollMainCharacter::ASideScrollMainCharacter()
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	FollowCamera->SetupAttachment(GetRootComponent());
+
+	Start = CreateDefaultSubobject<USceneComponent>("Start");
+	Start->SetupAttachment(GetMesh(), "muzzle_01");
+
+	End = CreateDefaultSubobject<USceneComponent>("End");
+	End->SetupAttachment(GetMesh(), "WeaponTipSocket");
 
 }
 
@@ -39,14 +44,19 @@ void ASideScrollMainCharacter::Tick(float DeltaTime)
 
 void ASideScrollMainCharacter::Attack(const FName& SideName,bool const bHeavyAttack)
 {
-	if (CombatComp->GetStamina() - /*ReduceAmount*/ 10.f < 0.f && !bReadyToAttack) return;
+	if (!bReadyToAttack) return;
+
+	UAnimMontage* AttackMontage = CombatComp->GetAnimMontageFromProperties(SideName, bHeavyAttack);
+	float BaseDamage = CombatComp->GetDamageFromMontage(AttackMontage) + FMath::RandRange(0, 4);
+
+	
+	if(!HasEnoughtStamina(BaseDamage / 2.f)) return;
 
 	bIsAttacking = true;
 	bReadyToAttack = false;
 
-	UAnimMontage* AttackMontage = CombatComp->GetAnimMontageFromProperties(SideName, bHeavyAttack);
-	float BaseDamage = CombatComp->GetDamageFromMontage(AttackMontage) + FMath::RandRange(0, 4);
-	float AnimLength = PlayAnimMontage(AttackMontage);
+	
+	float AnimLength = PlayAnimMontage(AttackMontage) + FMath::FRandRange(-0.5f, 0.5f);
 	
 	const FVector SocketLocation = GetMesh()->GetSocketLocation(BladeSocket);
 	const FVector Center = SocketLocation + GetActorForwardVector() * 100.f;
@@ -71,14 +81,27 @@ void ASideScrollMainCharacter::Attack(const FName& SideName,bool const bHeavyAtt
 	CombatComp->ReduceStamina(BaseDamage / 2);
 }
 
+bool ASideScrollMainCharacter::GetIsAttacking_Implementation()
+{
+	return bIsAttacking;
+}
+
+void ASideScrollMainCharacter::SetMaxHealth_Implementation(float NewHealth)
+{
+	CombatComp->SetMaxHealth(NewHealth);
+}
+
+void ASideScrollMainCharacter::SetMaxStamina_Implementation(float InStamina)
+{
+	CombatComp->SetMaxStamina(InStamina);
+}
+
 void ASideScrollMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SplineFollowCamera = Cast<ASplineFollowCamera>(UGameplayStatics::GetActorOfClass(this, SplineFollowCameraClass));
 	SplineRotateCamera = Cast<ASplineFollowCamera>(UGameplayStatics::GetActorOfClass(this, SplineRotateCameraClass));
-
-	GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ASideScrollMainCharacter::HandleStamina, 0.1f, true);
 }
 
 void ASideScrollMainCharacter::AttackReset()
@@ -87,25 +110,8 @@ void ASideScrollMainCharacter::AttackReset()
 	bReadyToAttack = true;
 }
 
-void ASideScrollMainCharacter::HandleStamina()
+bool ASideScrollMainCharacter::HasEnoughtStamina(const float Cost) const
 {
-	if (!bIsAttacking && bReadyToAttack)
-	{
-		//easy way to add stamina regen functionallity, but i'd personally change it in future, because its confusing
-		if (GetVelocity().Size() > 0.f)
-		{
-			CombatComp->ReduceStamina(0.5f);
-		}
-		if (GetVelocity().Size() <= 0.f)
-		{
-			CombatComp->ReduceStamina(-1.f);
-		}
-
-	}
-}
-
-bool ASideScrollMainCharacter::bHasStamina() const
-{
-	return CombatComp->GetStamina() > 0.f;
+	return CombatComp->HasEnoughStamina(Cost);
 }
 

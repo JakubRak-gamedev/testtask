@@ -5,6 +5,9 @@
 #include "Components/CombatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
+
+
 
 ASideScrollCharacterBase::ASideScrollCharacterBase()
 {
@@ -12,8 +15,11 @@ ASideScrollCharacterBase::ASideScrollCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CombatComp = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
+	WeaponBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
+	WeaponBox->SetupAttachment(GetMesh(), FName("BladeSocket"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+
 }
 
 
@@ -22,8 +28,12 @@ float ASideScrollCharacterBase::TakeDamage(float Damage, FDamageEvent const& Dam
 	//Here we are substracting Damage from our current Health
 	CombatComp->TakeDamage(Damage);
 
-	PlayAnimMontage(HitReact);
-
+	float HitReactLength = PlayAnimMontage(HitReact);
+	bHitReacting = true;
+	OnHitReactChangedSignature.Broadcast(bHitReacting);
+	
+	GetWorldTimerManager().SetTimer(HitReactTimer, this, &ASideScrollCharacterBase::ResetHitReact, HitReactLength, false);
+	
 	if (CombatComp->GetHealth() <= 0.f)
 	{
 		Die();
@@ -36,6 +46,12 @@ void ASideScrollCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ASideScrollCharacterBase::ResetHitReact()
+{
+	bHitReacting = false;
+	OnHitReactChangedSignature.Broadcast(bHitReacting);
 }
 
 void ASideScrollCharacterBase::Die()

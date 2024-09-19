@@ -8,6 +8,7 @@
 
 class UBlackboardComponent;
 class UBehaviorTreeComponent;
+class UPawnSensingComponent;
 /**
  * 
  */
@@ -20,7 +21,15 @@ public:
 	AEnemyAIController();
 
 protected:
+	virtual void BeginPlay() override;
 
 	UPROPERTY()
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UPawnSensingComponent> PawnSensingComponent;
+
+	UFUNCTION()
+	void OnSeePawn(APawn* SeenPawn);
+
 };
