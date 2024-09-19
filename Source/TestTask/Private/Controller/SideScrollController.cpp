@@ -41,20 +41,25 @@ void ASideScrollController::Move(const FInputActionValue& Value)
 {
 	if (ControlledCharacter == nullptr) return;
 	if (ICombatInterface::Execute_GetIsAttacking(ControlledCharacter)) return;
-	if (!ControlledCharacter->HasEnoughtStamina(10.f)) return;
+	if (!ControlledCharacter->HasEnoughStamina(10.f)) return;
 
 	const FVector2D ValueVector = Value.Get<FVector2D>();
+
+	//Get camera rotation
 	FRotator CameraRotation = ControlledCharacter->FollowCamera->GetComponentRotation();
-	FRotator YawRotation(0, CameraRotation.Yaw, 0);  // Ignore pitch and roll for movement
 	
-	// Get forward vector relative to the camera's yaw rotation
+	// Ignore pitch and roll for movement
+	FRotator YawRotation(0, CameraRotation.Yaw, 0); 
+	
+	// Get forward vector relative to the camera's yaw rotation and also right vector
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	
 	ControlledCharacter->AddMovementInput(ForwardDirection, ValueVector.X);
 	ControlledCharacter->AddMovementInput(RightDirection, ValueVector.Y);
    
-	
+
+	// calculating vector perpendicular to the direction of camera
 	FVector CameraForward = CameraRotation.Vector();
 	CameraForward.Z = 0;
 	CameraForward.Normalize();
@@ -62,16 +67,8 @@ void ASideScrollController::Move(const FInputActionValue& Value)
 	CameraRight.Normalize();
 	FVector MovementDirection = CameraRight * ValueVector.Y;
 
-	if (ControlledCharacter->GetCombatState() == ECombatState::ECS_InCombat)
-	{
-		ControlledCharacter->SetActorRotation(CameraRight.Rotation());
-	}
-	else
-	{
-		//ControlledCharacter->SetActorRotation(MovementDirection.Rotation());
-
-		ControlledCharacter->SetActorRotation(CameraRight.Rotation());
-	}
+	// rotating player to always look to the right side 
+	ControlledCharacter->SetActorRotation(CameraRight.Rotation());
 	
 	FRotator AimRotation = CameraRight.Rotation();
 	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ControlledCharacter->GetVelocity());
@@ -80,6 +77,7 @@ void ASideScrollController::Move(const FInputActionValue& Value)
 	float YawDifference = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 
 	ControlledCharacter->SetOffsetYaw(YawDifference);
+
 }
 
 void ASideScrollController::RightLightAttack()

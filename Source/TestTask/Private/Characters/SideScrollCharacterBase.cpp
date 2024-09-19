@@ -25,7 +25,7 @@ ASideScrollCharacterBase::ASideScrollCharacterBase()
 
 float ASideScrollCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	//Here we are substracting Damage from our current Health
+	//Here we are subtracting Damage from our current Health
 	CombatComp->TakeDamage(Damage);
 
 	float HitReactLength = PlayAnimMontage(HitReact);

@@ -20,11 +20,6 @@ public:
 	void UpdateAnimationProperties(float DeltaTime);
 
 	virtual void NativeInitializeAnimation() override;
-protected:
-
-	/* Handle Turning in place*/
-	void TurnInPlace();
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ASideScrollMainCharacter> SideScrollCharacter = nullptr;

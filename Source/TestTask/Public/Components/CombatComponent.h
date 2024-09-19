@@ -33,7 +33,11 @@ public:
 
 	UCombatComponent();
 
-	//Here we are mapping AnimMontages to amount of Base Damage
+	/*Here we are mapping AnimMontages to amount of Base Damage
+	 *
+	 * this is excellent, because we can add as many attacks as we want,
+	 * and also it's all in one place
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attacks")
 	TArray<FUAttackProperties> Attacks;
 protected:
@@ -41,6 +45,12 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	int32 MaxLifes = 5;
+
+	UPROPERTY(EditAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	int32 Lifes;
+	
 	UPROPERTY(EditAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth = 100.f;
 	float Health;
@@ -69,6 +79,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE float GetStamina() const { return Stamina; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE float GetMaxLifes() const { return MaxLifes; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE float GetLifes() const { return Lifes; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UAnimMontage* GetAnimMontageFromProperties(const FName& SideName, bool bIsHeavy);

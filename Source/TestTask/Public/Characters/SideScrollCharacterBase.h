@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Combat")
 	TObjectPtr<UCombatComponent> CombatComp;
 
+	/*
+	 * Because we are Enemy and MainCharacter class are inherited from BaseClass, that means all of them share the same TakeDamage function
+	 */
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
@@ -58,7 +61,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsAttacking = false;
-
 
 private:
 	void Die();

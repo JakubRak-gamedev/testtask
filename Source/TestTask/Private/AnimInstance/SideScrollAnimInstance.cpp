@@ -24,9 +24,7 @@ void USideScrollAnimInstance::UpdateAnimationProperties(float DeltaTime)
 	MovementOffset = SideScrollCharacter->GetOffSetYaw();
 
 	bIsInCombat = SideScrollCharacter->GetCombatState() == ECombatState::ECS_InCombat;
-
-	//GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("Offset: %f"), MovementOffset));
-	//TurnInPlace();
+	
 }
 
 void USideScrollAnimInstance::NativeInitializeAnimation()
@@ -34,29 +32,3 @@ void USideScrollAnimInstance::NativeInitializeAnimation()
 	SideScrollCharacter = Cast<ASideScrollMainCharacter>(TryGetPawnOwner());
 }
 
-void USideScrollAnimInstance::TurnInPlace()
-{
-	if (SideScrollCharacter == nullptr) return;
-
-	if (Speed > 0)
-	{
-
-	}
-	else
-	{
-		CharacterYawLastFrame = CharacterYaw;
-		CharacterYaw = SideScrollCharacter->GetActorRotation().Yaw;
-
-		const float YawDelta = CharacterYaw - CharacterYawLastFrame;
-
-		RootYawOffSet -= YawDelta;
-
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(1, -1, FColor::Blue, FString::Printf(TEXT("CharacterYaw: %f"), CharacterYaw));
-
-			GEngine->AddOnScreenDebugMessage(2, -1, FColor::Green, FString::Printf(TEXT("CharacterYaw: %f"), RootYawOffSet));
-		}
-	}
-}

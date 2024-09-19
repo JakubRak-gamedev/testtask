@@ -32,7 +32,7 @@ public:
 
 	void Attack(const FName& SideName, bool const bHeavyAttack);
 
-	/*CombatInterface Funtioncs*/
+	/*CombatInterface Functions*/
 	virtual bool GetIsAttacking_Implementation() override;
 
 	virtual void SetMaxHealth_Implementation(float NewHealth) override;
@@ -70,5 +70,5 @@ public:
 	FORCEINLINE void SetOffsetYaw(float InValue) {	MovementOffsetYaw = InValue;}
 	FORCEINLINE float GetOffSetYaw() const { return MovementOffsetYaw; }
 
-	bool HasEnoughtStamina(const float Cost) const;
+	bool HasEnoughStamina(const float Cost) const;
 };

@@ -28,8 +28,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UPawnSensingComponent> PawnSensingComponent;
-
-	UFUNCTION()
-	void OnSeePawn(APawn* SeenPawn);
-
 };

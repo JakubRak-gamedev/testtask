@@ -14,11 +14,19 @@ void UCombatComponent::BeginPlay()
 
 	Health = MaxHealth;
 	Stamina = MaxStamina;
+	Lifes = MaxLifes;
 }
 
 void UCombatComponent::TakeDamage(float InDamage)
 {
 	Health = Health - InDamage;
+	FMath::Clamp(Health, 0, MaxHealth);
+	
+	if(Health <= 0.f)
+	{
+		Lifes--;
+		Health = MaxHealth;
+	}
 }
 
 void UCombatComponent::ReduceStamina(float ReduceAmount)
@@ -29,12 +37,18 @@ void UCombatComponent::ReduceStamina(float ReduceAmount)
 
 UAnimMontage* UCombatComponent::GetAnimMontageFromProperties(const FName& SideName, bool bIsHeavy)
 {
+	TArray<UAnimMontage*> AnimMontagesToChoose;
 	for (const FUAttackProperties& Attack : Attacks)
 	{
 		if (Attack.SideName == SideName && Attack.IsHeavy == bIsHeavy)
-			return Attack.AttackMontage;
+		{
+			AnimMontagesToChoose.Add(Attack.AttackMontage);
+		}
 	}
 
+	if(AnimMontagesToChoose.Num() > 0)
+		return AnimMontagesToChoose[FMath::RandRange(0, AnimMontagesToChoose.Num() - 1)];
+	
 	return nullptr;
 }
 
@@ -54,6 +68,12 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	//stamina regen logic
+
+	/* if we are moving then make regen to negative
+	 *
+	 * instead we could make it a variable and give it uproperty to edit it from editor
+	 */
 	float RegenRate = StaminaRegenRate;
 	if(GetOwner()->GetVelocity().Size() > 0.f)
 	{

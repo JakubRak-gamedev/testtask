@@ -50,7 +50,7 @@ void ASideScrollMainCharacter::Attack(const FName& SideName,bool const bHeavyAtt
 	float BaseDamage = CombatComp->GetDamageFromMontage(AttackMontage) + FMath::RandRange(0, 4);
 
 	
-	if(!HasEnoughtStamina(BaseDamage / 2.f)) return;
+	if(!HasEnoughStamina(BaseDamage / 2.f)) return;
 
 	bIsAttacking = true;
 	bReadyToAttack = false;
@@ -100,17 +100,19 @@ void ASideScrollMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// getting reference to splines placed in scene
 	SplineFollowCamera = Cast<ASplineFollowCamera>(UGameplayStatics::GetActorOfClass(this, SplineFollowCameraClass));
 	SplineRotateCamera = Cast<ASplineFollowCamera>(UGameplayStatics::GetActorOfClass(this, SplineRotateCameraClass));
 }
 
 void ASideScrollMainCharacter::AttackReset()
 {
+	// resetting attack booleans
 	bIsAttacking = false;
 	bReadyToAttack = true;
 }
 
-bool ASideScrollMainCharacter::HasEnoughtStamina(const float Cost) const
+bool ASideScrollMainCharacter::HasEnoughStamina(const float Cost) const
 {
 	return CombatComp->HasEnoughStamina(Cost);
 }
